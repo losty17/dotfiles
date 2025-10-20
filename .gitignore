@@ -1,1 +1,24 @@
+# env
 .secrets
+
+# tmux plugins
+tmux/plugins/tmux-resurrect
+tmux/plugins/tmux-sensible
+tmux/plugins/tpm
+
+# other utilities
+uv
+gh
+btop
+gcloud
+configstore
+github-copilot
+
+# other data
+.zsh_sessions
+.zcompdump-*
+.zprofile
+.zsh_history
+
+# macOS
+.DS_Store
