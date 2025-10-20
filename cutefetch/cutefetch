@@ -1,0 +1,248 @@
+#!/usr/bin/env bash
+# ------------------------------------------------------------------- #
+readonly VERSION_INFO="Cutefetch v2.0 - To Cat or Not to Cat; That Is The Question."
+#
+# Tiny coloured fetch script with cute little animals
+#
+# Authored by: elenapan  (https://github.com/elenapan)
+# Modified by: strafe    (https://github.com/strafe)
+# Modified by: cybardev  (https://github.com/cybardev)
+# Modified by: Kalitsune (https://github.com/Kalitsune)
+# ------------------------------------------------------------------- #
+
+# ---------------------------- Utilities ---------------------------- #
+
+# help information
+help_info() {
+    echo "Cutefetch - Tiny coloured fetch script to display sysinfo"
+    echo ""
+    echo "USAGE: $(basename $0) [MODE] [EYE_SELECTOR]"
+    echo ""
+    echo "    [MODE]:"
+    echo "        -h,  --help: print this help message"
+    echo "        -k,  --kitty: show kitty ascii art with sysinfo"
+    echo "        -k2, --kitty2: show kitty ascii art with sysinfo (2nd variant)"
+    echo "        -b,  --bunny: show bunny ascii art with sysinfo"
+    echo "        -d,  --doggy: show doggy ascii art with sysinfo"
+    echo "        -p,  --pingu: show penguin ascii art with sysinfo"
+    echo "        -s,  --simple: show sysinfo with no ascii art"
+    echo "        -v,  --version: print the version number"
+    echo "        no option: same as -k, --kitty"
+    echo "        unkown option: print this help message"
+    echo "                       and return status code 1"
+    echo ""
+    echo "    [EYE_SELECTOR] (optional):"
+    echo "        Numbers from 0 to 14:"
+    echo "            Selects eyes for kitty, bunny, and doggy"
+    echo ""
+    for i in {0..14}; do
+        printf "        %2d:  %3s\n" "$i" "$(eyes $i)"
+    done
+    echo ""
+    printf "        no/other number:\n"
+    printf "             %3s (kitty)\n" "$(eyes 6)"
+    printf "          or %3s (bunny)\n" "$(eyes 0)"
+    printf "          or %3s (doggy)\n" "$(eyes 1)"
+    echo ""
+}
+
+# set the eyes, ^.^ by default
+eyes() {
+    case "$1" in
+    0) echo ". ." ;;
+    1) echo "· ·" ;;
+    2) echo "^ ^" ;;
+    3) echo "- -" ;;
+    4) echo "~ ~" ;;
+    5) echo "* *" ;;
+    7) echo "-.-" ;;
+    8) echo "~.~" ;;
+    9) echo "*.*" ;;
+    10) echo "0.0" ;;
+    11) echo "0 0" ;;
+    12) echo "o o" ;;
+    13) echo "o.o" ;;
+    14) echo "° o" ;;
+    *) echo "^.^" ;;
+    esac
+}
+
+# ------------------------- Fetch Functions ------------------------- #
+
+# sysinfo with cute kitty
+kittyfetch() {
+    echo "             $c1$w$t  $wm"
+    echo "   /\_/\     $c3$k$t  $kern"
+    echo "  ( $(eyes $1) )    $c2$s$t  $shell"
+    echo "   $c1> $c3^ $c1<     $c5$r$t  $res"
+    echo "             $c4$n$t  $net"
+}
+
+# sysinfo with cute kitty (2nd variant) 
+kittyfetch2() {
+    echo "   /'._           $c1$w$t  $wm"
+    echo "  ($(eyes $1) 7          $c3$k$t  $kern"
+    echo "   |'-'\"~.  .     $c2$s$t  $shell"
+    echo "   Uu^~C_J._.\"    $c5$r$t  $res"
+    echo "                  $c4$n$t  $net"
+}
+
+# sysinfo with cute bunny
+bunnyfetch() {
+    echo "             $c1$w$t  $wm"
+    echo "   (\ /)     $c3$k$t  $kern"
+    echo "   ( $(eyes $1))    $c2$s$t  $shell"
+    echo "   c($c1\"$t)($c1\"$t)   $c5$r$t  $res"
+    echo "             $c4$n$t  $net"
+}
+
+# sysinfo with cute puppy
+puppyfetch() {
+    echo "            $c1$w$t  $wm"
+    echo "$c3   /^ ^\    $k$t  $kern"
+    echo "$c3  /$t$c7 $(eyes $1) $c3\   $c2$s$t  $shell"
+    echo "$c3  V\\$t$c0 Y $c3/V   $c5$r$t  $res"
+    echo "    $c1 U$t      $c4$n$t  $net"
+}
+
+# sysinfo with cute penguin
+pingufetch() {
+    echo "$c3    W     $c1$w$t  $wm"
+    echo "$c0   ($t$c7'$c3>    $k$t  $kern"
+    echo "$c0  /$t$c7/‾\\$c0\\   $c2$s$t  $shell"
+    echo "$c0  ($t$c7\_/$c0)   $c5$r$t  $res"
+    echo "$c3   ~ ~    $c4$n$t  $net"
+}
+
+# sysinfo with cute icons
+simplefetch() {
+    echo "  $c1$w$t  $wm"
+    echo "  $c3$k$t  $kern"
+    echo "  $c2$s$t  $shell"
+    echo "  $c5$r$t  $res"
+    echo "  $c4$n$t  $net"
+}
+
+# ------------------------- Info Collectors ------------------------- #
+
+# set necessary variable and clear the screen
+init() {
+    # store colour codes in variables
+    for i in {0..7}; do
+        printf -v "c${i}" '%b' "\e[3${i}m" # make following text have this colour
+    done
+
+    readonly d=$'\e[1m' # make following text bold
+    readonly t=$'\e[0m' # end previously applied effects (colours, bold, etc.)
+    readonly v=$'\e[7m' # swap text and background colours
+
+    # icons for the sysinfo
+    readonly w="♥" # window manager
+    readonly k="" # kernel
+    readonly s="" # shell
+    readonly r="" # resolution
+    readonly n="" # network
+
+    # system information
+    case "$(uname -s)" in
+    Linux*)
+        readonly wm="$(xprop -id $(xprop -root -notype | awk '$1=="_NET_SUPPORTING_WM_CHECK:"{print $5}') -notype -f _NET_WM_NAME 8t | grep -m 1 "WM_NAME" | cut -f2 -d \")"
+        readonly kern="$(uname -r | cut -f1 -d '-')"
+        readonly shell=$(basename $SHELL)
+        readonly res="$(xdpyinfo | grep 'dimensions' | grep -oE '[0-9]+x[0-9]+' | head -n 1)"
+        readonly net="$(nmcli -g common | grep -m 1 connected | cut -f4- -d ' ')"
+        [[ -z $net ]] && readonly net="no wifi"
+        ;;
+    Darwin*)
+        readonly wm="$(get_wm_mac)"
+        readonly kern="$(uname) $(uname -r)"
+        readonly shell="$(basename "$SHELL")"
+        readonly res="$(get_res_mac)"
+        readonly net="$(/System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport -I | awk -F' SSID: ' '/ SSID: / {print $2}')"
+        ;;
+    *)
+        echo "We do not support $1 yet."
+        echo "Sorry for the inconvenience."
+        exit 1
+        ;;
+    esac
+
+    tput clear # clear terminal screen
+}
+
+# get the name of window manager (Mac OS)
+get_wm_mac() {
+    # From neofetch (https://github.com/dylanaraps/neofetch).
+    local -r ps_line="$(ps -e | grep -o \
+        -e "[S]pectacle" \
+        -e "[A]methyst" \
+        -e "[k]wm" \
+        -e "[c]hun[k]wm" \
+        -e "[y]abai" \
+        -e "[R]ectangle")"
+
+    case $ps_line in
+    *chunkwm*) echo chunkwm ;;
+    *kwm*) echo Kwm ;;
+    *yabai*) echo yabai ;;
+    *Amethyst*) echo Amethyst ;;
+    *Spectacle*) echo Spectacle ;;
+    *Rectangle*) echo Rectangle ;;
+    *) echo Quartz ;;
+    esac
+}
+
+# get the screen resolution (Mac OS)
+get_res_mac() {
+    # print resolution of multiple displays, separated by commas
+    system_profiler SPDisplaysDataType | awk '/Resolution:/ {printf $2"x"$4"\n"}' | xargs | sed 's/ /, /g'
+
+    # print resolution of retina display
+    # echo "$(system_profiler SPDisplaysDataType | grep Retina | awk '/Resolution:/ {printf $2"x"$4"\n"}')"
+}
+
+# --------------------------- Handle Args --------------------------- #
+
+# print the fetch info, kitty by default
+main() {
+    # -v, --version and -h, --help do not clear the screen
+    if [[ "$1" = "-v" ]] || [[ "$1" = "--version" ]]; then
+        echo $VERSION_INFO
+    elif [[ "$1" = "-h" ]] || [[ "$1" = "--help" ]]; then
+        help_info
+    else
+        init
+        echo ""
+        case "$1" in
+        -k | --kitty | "")
+            kittyfetch $2
+            ;;
+        -k2 | --kitty2)
+            kittyfetch2 $2
+            ;;
+
+        -b | --bunny)
+            [[ -z $2 ]] && eye="0" || eye="$2"
+            bunnyfetch $eye
+            ;;
+        -d | --doggy)
+            [[ -z $2 ]] && eye="1" || eye="$2"
+            puppyfetch $eye
+            ;;
+        -p | --pingu)
+            pingufetch
+            ;;
+        -s | --simple)
+            simplefetch
+            ;;
+        *)
+            help_info
+            exit 1
+            ;;
+        esac
+        echo ""
+    fi
+}
+
+# call the main function
+main $1 $2

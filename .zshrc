@@ -3,7 +3,7 @@ export ZSH=$HOME/.oh-my-zsh
 
 ## Startup Oh My Zsh
 ZSH_THEME="lambda-gitster" # set by `omz`
-plugins=(git thefuck)
+plugins=(git)
 source $ZSH/oh-my-zsh.sh
 
 ## Startup pyenv
@@ -15,32 +15,28 @@ eval "$(pyenv init -)"
 export HOMEBREW_AUTO_UPDATE_SECS=86400
 export HOMEBREW_NO_ENV_HINTS=1
 
-export PATH=$PATH:/Users/kappke/.spicetify:$HOME/.config/cutefetch:/Users/kappke/.local/lib/python3.12/site-packages
+export PATH=$HOME/.config/cutefetch:$PATH
+export PATH=$HOME/.local/lib/python3.12/site-packages:$PATH
 
 ## Display cutefetch on terminal startup
 cutefetch $(printf '-k\n-b\n-p' | shuf -n 1) $(shuf -i 1-13 -n 1)
 
 # bun completions
-[ -s "/Users/kappke/.bun/_bun" ] && source "/Users/kappke/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# pnpm
-export PNPM_HOME="/Users/kappke/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
 # node options
 export NODE_OPTIONS=$NODE_OPTIONS' --openssl-legacy-provider'
 
 # gemini key
-source ~/.config/.secrets
+[ -s "$HOME/.config/.secrets" ] && source "$HOME/.config/.secrets"
 
-eval $(thefuck --alias)
+eval "$(zoxide init zsh)"
+
+alias cd='z'
+alias cat='bat'
 
 . "$HOME/.local/bin/env"

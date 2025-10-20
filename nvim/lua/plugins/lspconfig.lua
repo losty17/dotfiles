@@ -15,9 +15,8 @@ return {
               require('cmp_nvim_lsp').default_capabilities()
             )
 
-            local lspconfig = require('lspconfig')
             -- lua settings
-            lspconfig.lua_ls.setup({})
+            vim.lsp.config("lua_ls", {})
             
             -- This is where you enable features that only work
             -- if there is a language server active in the file

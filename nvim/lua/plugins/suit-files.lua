@@ -1,6 +1,5 @@
 return {
-  dir = "~/Projetos/vim-plugins/suit-files",
-  name = "suit-files",
+  "losty17/suit-files.nvim",
   config = function()
     require("suit-files").setup()
   end,

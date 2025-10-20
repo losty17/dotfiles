@@ -8,14 +8,16 @@ return {
         ensure_installed = { 'lua_ls', 'ts_ls', 'pyright' },
         handlers = {
           function(server_name)
-            local lspconfig = require('lspconfig')
+            -- local lspconfig = require('lspconfig')
 
             if server_name ~= 'ts_ls' then
-              return lspconfig[server_name].setup({})
+              vim.lsp.config(server_name, {})
+              vim.lsp.enable({ server_name })
+              return
             end
 
             -- typescript settings
-            lspconfig.ts_ls.setup({
+            vim.lsp.config("ts_ls", {
               commands = {
                 OrganizeImports = {
                   function ()
@@ -35,7 +37,7 @@ return {
               }
             })
 
-            lspconfig.pyright.setup({
+            vim.lsp.config("pyright", {
               settings = {
                 python = {
                   analysis = {
@@ -46,6 +48,8 @@ return {
                 },
               },
             })
+
+            vim.lsp.enable({ "ts_ls", "pyright" })
 
             -- Execute orginize imports on saves
             vim.api.nvim_create_autocmd('BufWritePre', {
