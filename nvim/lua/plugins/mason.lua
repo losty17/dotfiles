@@ -5,7 +5,7 @@ return {
     config = function()
       require("mason").setup({})
       require("mason-lspconfig").setup({
-        ensure_installed = { 'lua_ls', 'ts_ls', 'pyright' },
+        ensure_installed = { 'lua_ls', 'ts_ls', 'pyright', 'gopls' },
         handlers = {
           function(server_name)
             -- Configure general diagnostic display (e.g., signs, virtual text)
@@ -63,8 +63,15 @@ return {
               group = vim.api.nvim_create_augroup('LspOrganizeImports', { clear = true }),
               desc = "Organize Imports on Save",
               callback = function (opts)
-                if vim.bo[opts.buf].filetype == 'typescriptreact' then
+                if (
+                  vim.bo[opts.buf].filetype == 'typescriptreact' or
+                  vim.bo[opts.buf].filetype == 'typescript' or
+                  vim.bo[opts.buf].filetype == 'javascript' or
+                  vim.bo[opts.buf].filetype == 'javascriptreact'
+                ) then
                   vim.cmd("OrganizeImports")
+                elseif vim.bo[opts.buf].filetype == 'python' then
+                  vim.cmd("Black")
                 end
               end
             })
