@@ -9,6 +9,13 @@ return {
       topdelete = { text = "‾" },
       changedelete = { text = "~" },
     },
+    current_line_blame = true,
+    current_line_blame_opts = {
+      virt_text = true,
+      virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
+      delay = 250,
+      ignore_whitespace = false,
+    },
     on_attach = function(bufnr)
       local gs = package.loaded.gitsigns
 
@@ -38,6 +45,11 @@ return {
         end)
         return "<Ignore>"
       end, { expr = true })
+
+      -- View commit details
+      map("n", "<leader>gb", function()
+        gs.blame_line({ full = true })
+      end, { desc = "Git blame line" })
     end,
   },
 }

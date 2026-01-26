@@ -17,6 +17,7 @@ export HOMEBREW_NO_ENV_HINTS=1
 
 export PATH=$HOME/.config/cutefetch:$PATH
 export PATH=$HOME/.local/lib/python3.12/site-packages:$PATH
+export PATH=$HOME/bin:$PATH
 
 ## Display cutefetch on terminal startup
 cutefetch $(printf '-k\n-b\n-p' | shuf -n 1) $(shuf -i 1-13 -n 1)
@@ -38,5 +39,9 @@ eval "$(zoxide init zsh)"
 
 alias cd='z'
 alias cat='bat'
+alias src='source s'
+alias fzf="fzf --style full --walker-skip .git,node_modules,target --preview 'bat -n --color=always {}' --bind 'ctrl-/:change-preview-window(down|hidden|)'"
 
 . "$HOME/.local/bin/env"
+
+export PATH=/Users/kappke/.bun/bin:/Users/kappke/bin:/Users/kappke/.local/lib/python3.12/site-packages:/Users/kappke/.config/cutefetch:/Users/kappke/.pyenv/shims:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/usr/local/share/dotnet:~/.dotnet/tools:/Users/kappke/.local/bin:/Users/kappke/.bun/bin:/Users/kappke/.local/lib/python3.12/site-packages:/Users/kappke/.config/cutefetch:/Users/kappke/.cargo/bin:/Applications/Ghostty.app/Contents/MacOS:/Users/kappke/go/bin
