@@ -12,3 +12,7 @@ vim.g.loaded_netrwPlugin = 1
 vim.opt.termguicolors = true
 
 vim.g.python3_host_prog = '~/.local/venv/nvim/bin/python'
+
+vim.o.wrap = true
+vim.o.linebreak = true
+vim.o.breakindent = true
