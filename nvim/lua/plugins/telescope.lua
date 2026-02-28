@@ -21,6 +21,9 @@ return {
         live_grep = {
           theme = "dropdown",
         },
+        defaults = {
+          theme = "dropdown",
+        },
       }
     })
     require('telescope').load_extension('fzf')
@@ -32,18 +35,18 @@ return {
       mode = "n"
     },
     {
+      "<M-p>",
+      "<cmd>Telescope find_files hidden=true<CR>",
+      mode = "n"
+    },
+    {
       "<leader>fg",
       "<cmd>Telescope live_grep<CR>",
       mode = "n"
     },
     {
-      "<leader>fb",
-      "<cmd>Telescope buffers<CR>",
-      mode = "n"
-    },
-    {
-      "<leader>fh",
-      "<cmd>Telescope help_tags<CR>",
+      "<M-f>",
+      "<cmd>Telescope live_grep<CR>",
       mode = "n"
     },
     {
